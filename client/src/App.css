@@ -1,0 +1,13 @@
+#toDownload {
+    background-color: #ffffff;
+    margin: auto;
+    max-width: 211mm;
+    max-height: 298mm;
+    padding: 5px;
+    font-size: 18px;
+}
+
+.toFix {
+    border: 2px groove black;
+    margin-bottom: 1mm;
+}
