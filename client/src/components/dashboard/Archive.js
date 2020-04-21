@@ -22,6 +22,16 @@ class Archive extends Component {
             this.props.history.push('/')
         }
 
+        if ((new Date().getMonth() + 1) < 10) {
+            this.setState({
+                month: '0' + (new Date().getMonth() + 1).toString()
+            })
+        } else {
+            this.setState({
+                month: '1' + (new Date().getMonth() + 1).toString()
+            })
+        }
+
         this.props.getAllReports();
 
     }
@@ -68,9 +78,9 @@ class Archive extends Component {
                 <div className="row">
                     <div className="col-md-6">
                         <select className="form-control form-control-lg mb-5" name="year" id="year" value={this.state.year} onChange={this.onChange}>
+                            <option value={2020}>2020</option>
                             <option value={2019}>2019</option>
                             <option value={2018}>2018</option>
-                            <option value={2017}>2017</option>
                         </select>
                     </div>
                     <div className="col-md-6">

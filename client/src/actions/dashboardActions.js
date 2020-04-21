@@ -7,7 +7,6 @@ export const createReport = (newReport, history) => dispatch => {
     dispatch(clearErrors());
     axios.post('/api/reports', newReport)
         .then(res => {
-            console.log(res);
             history.push('/')
         })
         .catch(err => {

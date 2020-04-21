@@ -160,10 +160,10 @@ class Statistics extends Component {
                 }
 
 
-
-                console.log(arrayOfPercentage);
-                console.log(statisticCurrent);
-                console.log(statisticLast);
+                //testing of statisticsCurrent, statisticLast and arrayOfPercentage
+                //console.log(arrayOfPercentage);
+                //console.log(statisticCurrent);
+                //console.log(statisticLast);
 
                 let i = 0
 
@@ -217,7 +217,7 @@ class Statistics extends Component {
                 })
 
                 content = (
-                    <table className="table table-hover">
+                    <table className="table table-responsive-md table-hover">
                         <thead>
                             <tr style={{ backgroundColor: '#F5F5F5' }} className="text-center">
                                 <th scope="col"></th>

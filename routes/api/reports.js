@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
+const path = require('path');
+
+const nodemailer = require('nodemailer');
+
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
 //validation
 const validationReport = require('../../validation/report');
 
@@ -1661,9 +1668,386 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 
     const { errors, isValid } = validationReport(req.body);
 
+    //console.log(req.body);
+
     if (!isValid) {
         return res.status(400).json(errors);
     }
+
+    let virman2;
+    let visaCard2;
+    let cash2;
+    let companyCard2;
+
+    if (isNaN(parseFloat(req.body.virman))) {
+        virman2 = 0;
+    } else {
+        virman2 = parseFloat(req.body.virman)
+    }
+
+    if (isNaN(parseFloat(req.body.visaCard))) {
+        visaCard2 = 0;
+    } else {
+        visaCard2 = parseFloat(req.body.visaCard)
+    }
+
+    if (isNaN(parseFloat(req.body.cash))) {
+        cash2 = 0;
+    } else {
+        cash2 = parseFloat(req.body.cash)
+    }
+
+    if (isNaN(parseFloat(req.body.companyCard2))) {
+        companyCard2 = 0;
+    } else {
+        companyCard2 = parseFloat(req.body.companyCard)
+    }
+
+    const sum = virman2 + visaCard2 + cash2 + companyCard2;
+
+    let orderingItemSold1;
+    let sendedReportCashRegister1;
+    let resetCashRegister1;
+
+    if (req.body.orderingItemSold) {
+        orderingItemSold1 = 'Da'
+    } else {
+        orderingItemSold1 = 'Ne'
+    }
+
+    if (req.body.sendedReportCashRegister) {
+        sendedReportCashRegister1 = 'Da'
+    } else {
+        sendedReportCashRegister1 = 'Ne'
+    }
+
+    if (req.body.resetCashRegister) {
+        resetCashRegister1 = 'Da'
+    } else {
+        resetCashRegister1 = 'Ne'
+    }
+
+
+    let visaCard1;
+    let virman1;
+    let cash1;
+    let companyCard1;
+    let customersIn1;
+    let customersWithBill1;
+    let goodsNotHave1;
+    let unhappyCustomers1;
+    let praiseCustomer1;
+    let acceptanceGoods1;
+    let generalProblems1;
+    let unsolvedProblems1;
+    let reclamation1;
+    let problemsCashRegister1;
+    let suggestion1;
+
+
+    if (req.body.visaCard) {
+        visaCard1 = req.body.visaCard;
+    } else {
+        visaCard1 = '0';
+    }
+
+    if (req.body.virman) {
+        virman1 = req.body.virman;
+    } else {
+        virman1 = '0';
+    }
+
+    if (req.body.cash) {
+        cash1 = req.body.cash;
+    } else {
+        cash1 = '0';
+    }
+
+    if (req.body.companyCard) {
+        companyCard1 = req.body.companyCard;
+    } else {
+        companyCard1 = '0';
+    }
+
+    if (req.body.customersIn) {
+        customersIn1 = req.body.customersIn;
+    } else {
+        customersIn1 = '0';
+    }
+
+    if (req.body.customersWithBill) {
+        customersWithBill1 = req.body.customersWithBill;
+    } else {
+        customersWithBill1 = '0';
+    }
+
+    if (req.body.goodsNotHave) {
+        goodsNotHave1 = req.body.goodsNotHave;
+    } else {
+        goodsNotHave1 = 'Ne';
+    }
+
+    if (req.body.unhappyCustomers) {
+        unhappyCustomers1 = req.body.unhappyCustomers;
+    } else {
+        unhappyCustomers1 = 'Ne';
+    }
+
+    if (req.body.praiseCustomer) {
+        praiseCustomer1 = req.body.praiseCustomer;
+    } else {
+        praiseCustomer1 = 'Ne';
+    }
+
+    if (req.body.acceptanceGoods) {
+        acceptanceGoods1 = req.body.acceptanceGoods;
+    } else {
+        acceptanceGoods1 = 'Ne';
+    }
+
+    if (req.body.generalProblems) {
+        generalProblems1 = req.body.generalProblems;
+    } else {
+        generalProblems1 = 'Ne';
+    }
+
+    if (req.body.unsolvedProblems) {
+        unsolvedProblems1 = req.body.unsolvedProblems;
+    } else {
+        unsolvedProblems1 = 'Ne';
+    }
+
+    if (req.body.reclamation) {
+        reclamation1 = req.body.reclamation;
+    } else {
+        reclamation1 = 'Ne';
+    }
+
+    if (req.body.problemsCashRegister) {
+        problemsCashRegister1 = req.body.problemsCashRegister;
+    } else {
+        problemsCashRegister1 = 'Ne';
+    }
+
+    if (req.body.suggestion) {
+        suggestion1 = req.body.suggestion;
+    } else {
+        suggestion1 = 'Ne';
+    }
+
+
+    //Creating PDF for email attachment
+
+    const doc = new PDFDocument({ autoFirstPage: false });
+
+    doc.pipe(fs.createWriteStream('pdf_file/file.pdf'));
+
+
+
+
+    doc.addPage({
+        margins: {
+            top: 50,
+            bottom: 30,
+            left: 50,
+            right: 50
+        },
+        size: [595.28, 841.89]
+    })
+
+    doc.fontSize(11);
+    doc.text(`Ime i prezime: ${req.body.person}`, {
+        align: 'left',
+    }
+    );
+
+    doc.text(`Smjena: ${req.body.shift}`, {
+        align: 'left'
+    }
+    );
+
+    doc.text(`Radnja: ${req.user.workplace}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Pos. term: ${visaCard1}`, {
+        align: 'left'
+    }
+    );
+
+    doc.text(`Gotovina: ${cash1}`, {
+        align: 'left'
+    }
+    );
+
+    doc.text(`Virman: ${virman1}`, {
+        align: 'left'
+    }
+    );
+
+    doc.text(`Kartica firme: ${companyCard1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Ukupan profit: ${sum}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Broj kupaca koji su usli u radnju: ${customersIn1}`, {
+        align: 'left'
+    }
+    );
+
+    doc.text(`Broj ostvarenih kupovina: ${customersWithBill1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Da li je poslata narudzba prodatih artikala proteklog dana? ${orderingItemSold1}`, {
+        align: 'left'
+    }
+    );
+    doc.text(`Da li je poslat izvjestaj POS kase? ${sendedReportCashRegister1}`, {
+        align: 'left'
+    }
+    );
+    doc.text(`Obrisan PCM za protekli dan? ${resetCashRegister1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Upit za robom koju ne posjedujemo: ${goodsNotHave1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Pohvale kupaca: ${praiseCustomer1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Uopsteni problemi: ${generalProblems1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Reklamacije: ${reclamation1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Prijedlozi za unapredjenje: ${suggestion1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Nezadovoljstvo kupaca: ${unhappyCustomers1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Prijem robe: ${acceptanceGoods1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Nerjesivi problemi: ${unsolvedProblems1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Problemi sa kasom, pos. term: ${problemsCashRegister1}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.text(`Kako je prosao dan? ${req.body.other}`, {
+        align: 'left'
+    }
+    );
+    doc.moveDown();
+
+    doc.end();
+
+    const dateOfReport = new Date(Date.now());
+    const date1 = dateOfReport.getDate();
+    const month = dateOfReport.getMonth() + 1;
+    const year = dateOfReport.getFullYear();
+
+    let shift1;
+
+    if (req.body.shift === 'Prva') {
+        shift1 = "I"
+    } else {
+        shift1 = 'II'
+    }
+
+    const subjectReport = date1 + '.' + month + '.' + year + '. - ' + req.user.workplace + ' - ' + shift1;
+
+
+
+    const output = `
+        <p>Izjestaj ${date1}.${month}.${year}.god</p>
+        <p>Izvjestaj podnio: ${req.body.person}</p>
+        <p>Smjena: ${req.body.shift}</p>
+        <p>Ukupan profit: ${sum}KM</p>
+    `
+
+    //NODEMAILER - sending reports to specific emails
+
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        host: 'mail.mass-light.com',
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: 'izvjestaj@mass-light.com', // generated ethereal user
+            pass: 'y%ibutc4QERu'  // generated ethereal password
+        }
+    });
+
+
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"Mass-light" <izvjestaj@mass-light.com>', // sender address
+        to: "acodavidovic.fit@gmail.com", // list of receivers
+        subject: subjectReport, // Subject line
+        text: 'Mass-light', // plain text body
+        html: output, // html body
+        attachments: [
+            {
+                filename: 'file.pdf',
+                content: fs.createReadStream('pdf_file/file.pdf')
+            }
+        ]
+    };
+
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            //console.log(error);
+            return res.status(400).json({ error: "ima error u slanju mejla" }); //CHANGE AFTER development mode
+        }
+
+        console.log('Message has been sent to email: acodavidovic.fit@gmail.com'); //to change 
+    });
 
     const newReport = {};
 
